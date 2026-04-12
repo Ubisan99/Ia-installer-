@@ -144,4 +144,16 @@ Questo kit di installazione è rilasciato sotto **MIT License** — usalo come v
 
 ---
 
+WSL1 è tecnicamente più stabile sul fronte rete, ma c'è un motivo strutturale ben preciso dietro questo comportamento.
+Ecco perché accade e quali sono le differenze chiave:
+1. Architettura di Rete: "Ospite" vs "Vicino"
+La differenza principale risiede nel modo in cui Linux comunica con l'hardware di Windows.
+WSL1 (Condivisione dello Stack): WSL1 usa lo stesso stack di rete di Windows. Non ha un suo indirizzo IP separato; è come se fosse un'applicazione che gira direttamente su Windows. Se Windows è connesso, lo è anche WSL1. Zero complicazioni.
+WSL2 (Virtualizzazione): WSL2 è una vera macchina virtuale (leggera, ma pur sempre una VM). Ha il suo kernel Linux e, soprattutto, il suo Virtual Ethernet Adapter. Vive in una sottorete privata dietro un NAT (Network Address Translation).
+2. Perché WSL2 "fa i capricci"?
+Il passaggio alla virtualizzazione ha introdotto tre problemi comuni che in WSL1 semplicemente non esistono:
+Il NAT e i DNS: WSL2 deve tradurre le richieste dal suo "mondo" a quello di Windows. Spesso il file /etc/resolv.conf all'interno di Linux non riesce a sincronizzarsi correttamente con i DNS di Windows, specialmente se usi una VPN o cambi spesso rete (es. da Wi-Fi dell'ufficio a casa).
+Il Firewall di Windows: Essendo una rete separata, il traffico di WSL2 viene talvolta visto da Windows come "traffico esterno" e bloccato dal firewall se non configurato a dovere.
+Cambio di IP al riavvio: Ogni volta che riavvii il PC, l'IP interno di WSL2 cambia. Se hai servizi che devono comunicare tra i due sistemi, questo "balletto" degli indirizzi rompe i collegamenti.
+
 *🧪 BortyLab — Aggiornato al 12 Aprile 2026*
